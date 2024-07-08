@@ -1,3 +1,4 @@
+import ProfileEditButton from '@/components/ProfileEditButton';
 import MyPageLayout from './layout';
 
 async function fetchPosts() {
@@ -27,7 +28,7 @@ export default async function MyPage() {
                 <span className="text-sm text-blue-500">#창원영</span>
               </div>
             </div>
-            <button>프로필 수정</button>
+            <ProfileEditButton />
           </div>
           <div className='mt-8'>
             <span className="text-2xl font-bold">내가 쓴 게시글</span>
