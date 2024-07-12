@@ -21,7 +21,9 @@ const CommentUpload = ({ postId }: Params) => {
         data: { user },
         error: getUserError,
       } = await supabase.auth.getUser();
-      setUserData(user);
+      if (user) {
+        setUserData(user);
+      }
       return;
     };
     fetchData();
@@ -48,7 +50,7 @@ const CommentUpload = ({ postId }: Params) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!contentRef.current.value) {
+    if (!contentRef?.current?.value) {
       Swal.fire({
         title: "댓글이 입력되지 않았습니다.",
         text: "댓글은 40자 이내로 작성해주세요.",
@@ -60,9 +62,9 @@ const CommentUpload = ({ postId }: Params) => {
     }
     const newComment: NewCommentType = {
       post_id: +postId,
-      author_nickname: user.nickname,
+      author_nickname: user?.nickname,
       content: contentRef.current.value,
-      author_id: user.sub,
+      author_id: user?.sub,
     };
     createComment(newComment);
     contentRef.current.value = "";

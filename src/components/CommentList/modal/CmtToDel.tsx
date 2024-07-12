@@ -6,6 +6,7 @@ import { formatDateString } from "@/utils/formatDateString";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import React from "react";
+import Swal from "sweetalert2";
 
 interface PropsType {
   comment: CommentType;
@@ -15,6 +16,7 @@ interface PropsType {
 const CmtToDel = ({ comment, onClose }: PropsType) => {
   const { post_id } = comment;
   const queryClient = useQueryClient();
+  const profileImgSrc = comment?.users?.profile_image;
 
   const { mutate: deleteComment } = useMutation({
     mutationFn: async (commentId: number) => {
@@ -25,6 +27,11 @@ const CmtToDel = ({ comment, onClose }: PropsType) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["comments", String(post_id)],
+      });
+      Swal.fire({
+        title: "댓글이 삭제되었습니다.",
+        text: "",
+        icon: "success",
       });
     },
   });
@@ -38,14 +45,25 @@ const CmtToDel = ({ comment, onClose }: PropsType) => {
     <>
       <div className="w-[900px] h-[80px] flex justify-between items-center border-t border-b border-[#dddddd] text-[18px]">
         <div className="w-[850px] h-[80px] flex justify-start items-center">
-          <Image
-            src={comment?.users?.profile_image}
-            width={50}
-            height={50}
-            alt="프로필 이미지"
-            priority
-            className="w-[50px] h-[50px] rounded-full object-cover"
-          />
+          {profileImgSrc ? (
+            <Image
+              src={profileImgSrc}
+              width={50}
+              height={50}
+              alt="프로필 이미지"
+              priority
+              className="w-[50px] h-[50px] rounded-full object-cover"
+            />
+          ) : (
+            <Image
+              src="/concert-default-image.png"
+              width={50}
+              height={50}
+              alt="프로필 이미지"
+              priority
+              className="w-[50px] h-[50px] rounded-full object-cover"
+            />
+          )}
           <span className="w-auto ml-[15px] text-black">
             {comment?.users?.nickname}
           </span>

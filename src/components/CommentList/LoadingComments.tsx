@@ -10,7 +10,7 @@ const LoadingComments = () => {
         width={loadingGif.width}
         height={loadingGif.height}
         alt="로딩 중..."
-        className="relative top-52 w-14 h-14"
+        className="mt-52 mb-52 w-14 h-14"
       />
     </div>
   );

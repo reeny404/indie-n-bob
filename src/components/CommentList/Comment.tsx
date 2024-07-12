@@ -23,25 +23,39 @@ const Comment = ({ comment }: PropsType) => {
         data: { user },
         error: getUserError,
       } = await supabase.auth.getUser();
-      setUserData(user);
+      if (user) {
+        setUserData(user);
+      }
       return;
     };
     fetchData();
   }, []);
 
   const user = userData?.user_metadata;
+  const profileImgSrc = comment?.users?.profile_image;
 
   return (
     <div className="w-full h-[95px] flex justify-between items-center border-b border-[#dddddd]">
       <div className="w-full h-[95px] flex justify-start items-center">
-        <Image
-          src={comment?.users?.profile_image}
-          width={50}
-          height={50}
-          alt="프로필 이미지"
-          priority
-          className="w-[50px] h-[50px] rounded-full object-cover"
-        />
+        {profileImgSrc ? (
+          <Image
+            src={profileImgSrc}
+            width={50}
+            height={50}
+            alt="프로필 이미지"
+            priority
+            className="w-[50px] h-[50px] rounded-full object-cover"
+          />
+        ) : (
+          <Image
+            src="/concert-default-image.png"
+            width={50}
+            height={50}
+            alt="프로필 이미지"
+            priority
+            className="w-[50px] h-[50px] rounded-full object-cover"
+          />
+        )}
         <span className="w-32 max-w-[130px] ml-[15px]">
           {comment?.users?.nickname}
         </span>

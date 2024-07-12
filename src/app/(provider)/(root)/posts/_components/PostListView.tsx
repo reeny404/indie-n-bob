@@ -5,12 +5,16 @@ import SITE_URL from "@/constant";
 import { Post, PostWithAuthor } from "@/types/Post";
 import { useQuery } from "@tanstack/react-query";
 import PostItemSqure from "./PostItemSqure";
+import Link from "next/link";
+import useUserData from "@/hooks/useUserData";
 
 type PostListViewProps = {
   keyword?: string;
 };
 
 function PostListView({ keyword }: PostListViewProps) {
+  const { data: userData } = useUserData();
+
   const {
     data: posts,
     isLoading,
@@ -19,6 +23,7 @@ function PostListView({ keyword }: PostListViewProps) {
     queryKey: ["posts"],
     queryFn: async () => {
       const response = await fetch(`${SITE_URL}/api/posts`);
+
       return await response.json();
     },
   });
@@ -46,13 +51,27 @@ function PostListView({ keyword }: PostListViewProps) {
   }
 
   return (
-    <ol className="w-full grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3">
-      {filteredPosts.map((post) => (
-        <li key={post.post_id} className="flex flex-col w-full max-w-sm p-4">
-          <PostItemSqure post={post}></PostItemSqure>
-        </li>
-      ))}
-    </ol>
+    <>
+      <div className="relative w-full">
+        <div className="absolute left-0 bottom-0">
+          {userData && (
+            <Link
+              className="text-white bg-main-color px-4 py-2 rounded-[10px]"
+              href={"/posts/create"}
+            >
+              <button>글쓰기</button>
+            </Link>
+          )}
+        </div>
+      </div>
+      <ol className="w-full grid grid-cols-1 gap-10 mt-8 md:grid-cols-2 lg:grid-cols-3 p-0">
+        {filteredPosts.map((post) => (
+          <li key={post.post_id} className="flex flex-col w-full max-w-sm">
+            <PostItemSqure post={post}></PostItemSqure>
+          </li>
+        ))}
+      </ol>
+    </>
   );
 }
 

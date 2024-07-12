@@ -16,7 +16,7 @@ export function AlertUi() {
       <Alert className="z-50 bg-slate-50 fixed w-1/3 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white">
         <AlertTitle className="text-xl font-bold">{alertTitle}</AlertTitle>
         <AlertDescription className="mt-3">{alertMessage}</AlertDescription>
-        <AlertDescription className="text-right">
+        <AlertDescription className="text-center mt-3">
           <button
             className="bg-main-color p-2 px-3 rounded-md text-white"
             onClick={() => setAlert(false, "", "")}

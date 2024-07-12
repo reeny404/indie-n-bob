@@ -12,7 +12,7 @@ type DeleteParameter = {
   commentId: number;
 };
 
-// 게시물 당 댓글목록 Read
+// 게시물 당 댓글목록 Read (페이지네이션)
 export async function GET(request: NextRequest, params: GetParameter) {
   const {
     params: { postId: id },
@@ -20,21 +20,16 @@ export async function GET(request: NextRequest, params: GetParameter) {
 
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "5");
-  const offset = parseInt(searchParams.get("offset") || "5");
-
-  console.log(limit, offset);
+  const offset = parseInt(searchParams.get("offset") || "0");
 
   const supabase = createClient();
   const { data: comments } = await supabase
     .from(TABLE_NAME)
     .select("*, users:author_id(*)")
     .eq(PK_COLUMN_NAME, id)
+    .order("created_at", { ascending: true }) 
     .range(offset, offset + limit - 1);
 
-  comments.sort(
-    (a, b) =>
-      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  );
   return NextResponse.json(comments);
 }
 

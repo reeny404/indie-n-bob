@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import useUserData from "@/hooks/useUserData";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 
@@ -11,6 +12,8 @@ interface User {
 
 const Header: FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const { data: userData } = useUserData<User>();
+
   const supabase = createClient();
 
   const fetchUser = async () => {
@@ -21,7 +24,7 @@ const Header: FC = () => {
         console.error("Error getting session:", sessionError);
         setUser(null);
       } else {
-        console.log("Session Data:", sessionData);
+        //console.log("Session Data:", sessionData);
         if (sessionData.session?.user) {
           const { data: profileData, error: profileError } = await supabase
             .from("users")
@@ -79,7 +82,7 @@ const Header: FC = () => {
   return (
     <div className="border-bottom">
       <ul
-        className={`w-full mx-auto nav flex items-center ${
+        className={`w-[1280px] mx-auto nav flex items-center ${
           user ? "logged-in" : "logged-out"
         }`}
       >
@@ -109,37 +112,43 @@ const Header: FC = () => {
           </Link>
         </li>
 
-        <li className="nav-item ms-auto relative mx-2">
-          <a
-            className="nav-link dropdown-toggle text-main-color"
-            data-bs-toggle="dropdown"
-            href="#"
-            role="button"
-            aria-expanded="false"
-          >
-            {user ? user.nickname : ""}
-          </a>
-          <ul className="dropdown-menu absolute">
-            <li>
-              <Link className="dropdown-item" href="/mypage">
-                마이페이지
-              </Link>
-            </li>
-          </ul>
-        </li>
-
-        {user ? (
-          <li className="nav-item mx-2">
-            <button
-              onClick={handleLogout}
-              className="no-underline text-[#10AF86]"
+        {userData ? (
+          <li className="nav-item ms-auto relative mx-2">
+            <a
+              className="nav-link dropdown-toggle text-main-color"
+              data-bs-toggle="dropdown"
+              href="#"
+              role="button"
+              aria-expanded="false"
             >
-              로그아웃
-            </button>
+              <div className="flex items-center">
+                <p className="w-10 h-10 rounded-full overflow-hidden mb-0 mr-2">
+                  <img src={userData.userData.profile_image} />
+                </p>
+                {user && userData && userData?.userData
+                  ? userData?.userData?.nickname
+                  : ""}
+              </div>
+            </a>
+            <ul className="dropdown-menu absolute">
+              <li>
+                <Link className="dropdown-item" href="/mypage">
+                  마이페이지
+                </Link>
+              </li>
+              <li className="nav-item">
+                <button
+                  onClick={handleLogout}
+                  className="dropdown-item no-underline text-[#10AF86]"
+                >
+                  로그아웃
+                </button>
+              </li>
+            </ul>
           </li>
         ) : (
           <>
-            <li className="nav-item mx-2">
+            <li className="nav-item mx-2 ms-auto">
               <Link href="/auth/login" className="no-underline">
                 <p className="text-[#10AF86] mb-0">로그인</p>
               </Link>

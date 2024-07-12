@@ -32,6 +32,10 @@ export default function SignUpPage(): JSX.Element {
   const { setAlert } = useAlertStore();
   const router = useRouter();
 
+  const onChangeEmail = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
   const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     const passwordRegex =
@@ -74,6 +78,16 @@ export default function SignUpPage(): JSX.Element {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (error.password) {
+      setAlert(true, "비밀번호 오류 🥲", "비밀번호 조건을 확인해주세요.");
+      return;
+    }
+
+    if (error.nickname) {
+      setAlert(true, "닉네임 오류 🥲", "닉네임 조건을 확인해주세요.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/signup",
@@ -86,30 +100,32 @@ export default function SignUpPage(): JSX.Element {
         }
       );
 
-      if (response.data.error) {
-        console.log(response.data.error);
+      if (response.data) {
+        setAlert(
+          true,
+          `${nickname}님 반갑습니다!👋`,
+          "로그인 페이지로 이동합니다."
+        );
+
+        setEmail("");
+        setPassword("");
+        setNickname("");
+        setIsAdmin(false);
+        setFavoriteArtists([]);
+
+        setTimeout(() => {
+          router.replace("/auth/login");
+        }, 1500);
       } else {
-        console.log("회원가입 성공");
+        setAlert(true, "회원가입 오류 🥲", response.data.error);
       }
     } catch (error) {
-      console.log("회원가입 실패");
+      setAlert(
+        true,
+        `Sorry! 🥲`,
+        "서버 오류가 발생했습니다. 다시 시도해주세요."
+      );
     }
-
-    setAlert(
-      true,
-      `${nickname}님 반갑습니다!👋`,
-      "로그인 페이지로 이동합니다."
-    );
-    setTimeout(() => {
-      router.replace("/auth/login");
-    }, 1500);
-    // Swal.fire({
-    //   icon: "success",
-    //   title: `${nickname}님 반갑습니다!`,
-    //   text: "로그인 페이지로 이동합니다.",
-    //   showConfirmButton: false,
-    //   timer: 1500,
-    // });
   };
 
   return (
@@ -128,7 +144,7 @@ export default function SignUpPage(): JSX.Element {
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={onChangeEmail}
               placeholder="formflet@email.com"
             />
             <AiOutlineUser className="absolute left-3 top-1/2 transform -translate-y-1/2" />

@@ -11,8 +11,17 @@ import ErrorGetComments from "./ErrorGetComments";
 const CommentsView = ({ postId }: Params) => {
   const [pageNo, setPageNo] = useState(1); // 페이지 넘버
   const [pageSize, setPageSize] = useState(1); // 클릭 가능한 페이지 수
-  const [commentCount, setCommentCount] = useState(5); // 페이지당 댓글 수
-  const [clickedPage, setClickedPage] = useState(1); // 클릭한 페이지 (색상변경용)
+  const COMMENT_COUNT = 5;
+
+  const { data: cmtLength } = useQuery({
+    queryKey: ["comments", postId],
+    queryFn: async () => {
+      const response = await fetch(
+        `${SITE_URL}/api/posts/${postId}/comments/length`
+      );
+      return await response.json();
+    },
+  });
 
   const {
     data: comments,
@@ -22,22 +31,21 @@ const CommentsView = ({ postId }: Params) => {
     queryKey: ["comments", postId, pageNo],
     queryFn: async () => {
       const response = await fetch(
-        `${SITE_URL}/api/posts/${postId}/comments?limit=${
-          commentCount + (pageNo - 1) * commentCount
-        }&offset=${(pageNo - 1) * commentCount}`
+        `${SITE_URL}/api/posts/${postId}/comments?limit=${COMMENT_COUNT}&offset=${
+          (pageNo - 1) * COMMENT_COUNT
+        }`
       );
       return await response.json();
     },
   });
 
   useEffect(() => {
-    if (comments) {
-      setPageSize(Math.ceil(comments.length / commentCount));
+    if (comments && cmtLength) {
+      setPageSize(Math.ceil(cmtLength / COMMENT_COUNT));
     }
-  }, [comments]);
+  }, [comments, cmtLength]);
 
   const handleClickPageBtn = async (num: number) => {
-    setClickedPage(num);
     setPageNo(num);
   };
 
@@ -51,7 +59,7 @@ const CommentsView = ({ postId }: Params) => {
   return (
     <div className="w-full mt-[5px] text-[18px]">
       <span className="w-full h-[90px] flex items-center text-[#8D8D8D] ">
-        댓글 ({comments?.length})
+        댓글 ({cmtLength})
       </span>
       {comments?.map((comment) => (
         <Comment key={comment.comment_id} comment={comment} />
@@ -63,7 +71,7 @@ const CommentsView = ({ postId }: Params) => {
               key={index + 1}
               onClick={() => handleClickPageBtn(index + 1)}
               className={`hover:cursor-pointer ${
-                clickedPage === index + 1 ? "text-[#10AF86]" : "text-[#616161]"
+                pageNo === index + 1 ? "text-[#10AF86]" : "text-[#616161]"
               }`}
             >
               {index + 1}

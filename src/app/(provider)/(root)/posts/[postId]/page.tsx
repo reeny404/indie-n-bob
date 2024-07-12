@@ -80,7 +80,7 @@ async function PostDetailPage({ params: { postId } }: PostDetailPageProps) {
       </div>
       <div className="pt-18 pb-4 flex justify-between items-center">
         <Hashtag tags={hashtag?.tags} size="sm" />
-        <LikeButton postId={postId}/>
+        <LikeButton postId={postId} />
       </div>
       <BreakLine />
       <Comments postId={postId} />
