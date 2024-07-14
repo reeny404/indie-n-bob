@@ -1,3 +1,5 @@
+"use client";
+
 import getMyInfo from "@/utils/getMyInfo";
 import { useQuery } from "@tanstack/react-query";
 

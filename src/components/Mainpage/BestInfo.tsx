@@ -1,5 +1,5 @@
 import SITE_URL from "@/constant";
-import useAllLikes from "@/hooks/useAllLIkes"; // 좋아요 데이터 가져오기 훅
+import useAllLikes from "@/hooks/useAllLikes"; // 좋아요 데이터 가져오기 훅
 import { Post } from "@/types/Post";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";

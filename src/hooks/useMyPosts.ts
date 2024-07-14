@@ -1,3 +1,5 @@
+"use client";
+
 import getMyPosts from "@/utils/getMyPosts";
 import { useInfiniteQuery } from "@tanstack/react-query";
 

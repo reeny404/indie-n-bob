@@ -1,3 +1,5 @@
+"use client";
+
 import getLikes from "@/utils/getLikes"
 import { useQuery } from "@tanstack/react-query";
 

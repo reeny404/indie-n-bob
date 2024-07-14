@@ -1,3 +1,5 @@
+"use client";
+
 import SITE_URL from "@/constant";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
